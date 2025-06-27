@@ -1,11 +1,10 @@
-// GameEnums.cs
-
 public enum GamePhase
 {
-    Idle,
-    TunnelDrawing,
-    PathSelection,
-    Combat
+    Idle,              // No input, waiting for player or system event
+    TunnelDrawing,     // Player draws a tunnel path (underground planning)
+    TunnelNavigation,  // Player auto-travels along the tunnel
+    Hovering,          // Player hovers above ground, awaiting input
+    Combat             // Player can swipe to attack enemies          
 }
 
 public enum PlayerLocation
@@ -20,4 +19,4 @@ public enum AnimationState
     Traveling,
     Bursting,
     Hovering
-} 
+}

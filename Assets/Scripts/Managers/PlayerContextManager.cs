@@ -1,13 +1,14 @@
-// PlayerContextManager.cs
 using UnityEngine;
 
 public class PlayerContextManager : MonoBehaviour
 {
     public Transform playerTransform;
 
-    public PlayerLocation CurrentLocation
+    public PlayerLocation CurrentLocation 
     {
-        get => playerTransform.position.y < 0 ? PlayerLocation.Underground : PlayerLocation.AboveGround;
+        get => playerTransform.position.y < 0 ? 
+                    PlayerLocation.Underground : 
+                    PlayerLocation.AboveGround; 
     }
 
     public float Depth

@@ -4,7 +4,7 @@ public class PlayerHitbox : MonoBehaviour
 {
 private void OnTriggerEnter2D(Collider2D other)
 {
-        Debug.Log(other.name);
+    Debug.Log(other.name);
     if (other.CompareTag("Enemy"))
         {
             Enemy enemy = other.GetComponent<Enemy>();
@@ -14,7 +14,7 @@ private void OnTriggerEnter2D(Collider2D other)
                 {
                     enemy.TakeDamage(1);
                     CameraShaker.Instance.Shake();
-                    CombatManager.Instance.UseCharge();
+                    // CombatManager.Instance.UseCharge();
 
                     // TODO: play effects, score, etc.
                 }

@@ -1,4 +1,3 @@
-// CombatManager.cs
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -11,7 +10,7 @@ public class CombatManager : MonoBehaviour
     public float combatDuration = 10f;
 
     private List<Enemy> activeEnemies = new List<Enemy>();
-    private int currentCharges;
+    [SerializeField] private int currentCharges;
     private float timeRemaining;
     private bool combatActive = false;
 

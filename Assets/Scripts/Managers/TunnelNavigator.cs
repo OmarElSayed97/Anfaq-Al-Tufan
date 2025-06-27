@@ -38,8 +38,10 @@ public class TunnelNavigator : MonoBehaviour
             return;
         }
 
-        path = new List<Vector3>();
-        path.Add(transform.position); // Add current position as starting approach point
+        path = new List<Vector3>
+        {
+            transform.position // Add current position as starting approach point
+        };
         path.AddRange(tunnelPath);    // Follow actual tunnel afterward
 
         currentIndex = 0;
@@ -55,13 +57,24 @@ public class TunnelNavigator : MonoBehaviour
         GamePhaseManager.Instance.SetInputLock(true);
     }
 
-    void Update()
+    public void Initialize()
     {
+        // InputManager.Instance.swipePressStarted += OnHoverInput;
+    }
+
+    public void FinalizeNavigation()
+    {
+        // InputManager.Instance.swipePressStarted -= OnHoverInput;
+    }
+
+    public void OnUpdate()
+    {
+        // Traverse through the points
         if (isNavigating && path != null && currentIndex < path.Count)
         {
             enemiesChecked = false;
             Vector3 target = path[currentIndex];
-            Vector3 moveDir = (target - transform.position);
+            Vector3 moveDir = target - transform.position;
             moveDir.z = 0;
 
           // Update deepest Y while underground
@@ -100,26 +113,22 @@ public class TunnelNavigator : MonoBehaviour
                 {
                     isNavigating = false;
                     StartCoroutine(HandleBurst());
+                    // DecideNextPhase();
                 }
             }
-        }
-        else if (hovering)
+        } 
+    }
+
+    private void DecideNextPhase()
+    {
+        if (!hovering) return;
+        if (AreEnemiesNearby())
         {
-            // Await player input
-            if (AreEnemiesNearby())
-            {
-                if (Input.GetMouseButtonDown(0)  ) // or any other combat input
-                {
-                    EndHover(GamePhase.Combat);
-                }
-            }
-            else if(!enemiesChecked)
-            {
-                if (Input.GetMouseButtonDown(0)) // or tunnel drawing trigger
-                {
-                    EndHover(GamePhase.TunnelDrawing);
-                }
-            }
+            EndHover(GamePhase.Combat);
+        }
+        else if (!enemiesChecked)
+        {
+            EndHover(GamePhase.TunnelDrawing);
         }
     }
 
@@ -159,8 +168,6 @@ public class TunnelNavigator : MonoBehaviour
             yield return null;
         }
 
-       
-
         // Hover animation
         playerContext.SetAnimationState(AnimationState.Hovering);
         hoverTween = characterVisual.DOMoveY(characterVisual.position.y + 0.15f, 0.5f)
@@ -169,6 +176,7 @@ public class TunnelNavigator : MonoBehaviour
 
         GamePhaseManager.Instance.SetInputLock(false);
         hovering = true;
+        DecideNextPhase();
 
         Debug.Log("Tunnel navigation and burst complete. Awaiting player input.");
     }
@@ -197,7 +205,6 @@ public class TunnelNavigator : MonoBehaviour
 
     bool AreEnemiesNearby()
     {
-
         if (!enemiesChecked)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerContext.playerTransform.position, sliceRadius, enemyLayer);
@@ -224,7 +231,5 @@ public class TunnelNavigator : MonoBehaviour
         }
         else
             return true;
-
-        
     }
 }
