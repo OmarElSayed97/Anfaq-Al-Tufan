@@ -1,60 +1,55 @@
-// KillFeedbackUI.cs
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class KillFeedbackUI : MonoBehaviour
 {
-    public TMP_Text scoreText;
-    public Image killLabelImage;
-    public float punchScale = 1.5f;
-    public float punchDuration = 0.4f;
-    public float riseDistance = 20f;
-    public float riseDuration = 2f;
-    public GameObject panel;
-
+    public GameObject scorePopupPrefab;     
+    public Transform poolParent;
+    public int poolSize = 3;
+    public TMP_Text totalScoreText;
     private int currentScore = 0;
+    private Queue<GameObject> popupPool = new Queue<GameObject>();
 
-    public void PlayKillFeedback(int scoreToAdd)
+    void Awake()
     {
-        int from = currentScore;
-        int to = currentScore + scoreToAdd;
-        currentScore = to;
-
-        // Tween the score value
-        DOTween.To(() => from, x =>
+        for (int i = 0; i < poolSize; i++)
         {
-            from = x;
-            scoreText.text = "+" + from.ToString();
-        }, to, 1f).SetEase(Ease.OutQuad);
-
-        // Score text punch and rise
-        scoreText.transform.localScale = Vector3.zero;
-
-        Sequence scoreSeq = DOTween.Sequence();
-        scoreSeq.Append(scoreText.transform.DOScale(Vector3.one * punchScale, 0.5f).SetEase(Ease.OutBack))
-                .Append(scoreText.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.InOutSine));
-
-
-        // Kill label effect
-        killLabelImage.transform.localScale = Vector3.zero;
-        killLabelImage.DOFade(1, 0.1f);
-        killLabelImage.transform.DOScale(1.2f, 0.25f)
-            .SetEase(Ease.OutBack)
-            .OnComplete(() =>
-            {
-                killLabelImage.transform.DOScale(1f, 0.5f);
-                killLabelImage.DOFade(0, 0.5f).SetDelay(1f);
-            });
+            GameObject popup = Instantiate(scorePopupPrefab, poolParent);
+            popup.SetActive(false);
+            popupPool.Enqueue(popup);
+        }
     }
 
-
-    void Update()
+    public void PlayKillFeedback(int scoreToAdd, Vector3 worldPosition)
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (popupPool.Count == 0)
         {
-            panel.SetActive(false);
+            Debug.LogWarning("No available score popups in pool! Consider increasing pool size.");
+            return;
         }
+
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPosition);
+
+        GameObject popup = popupPool.Dequeue();
+        popup.SetActive(true);
+        popup.transform.position = screenPos;
+
+        TMP_Text scoreText = popup.GetComponentInChildren<TMP_Text>();
+        scoreText.text = "+" + scoreToAdd.ToString();
+        popup.transform.localScale = Vector3.zero;
+
+        Sequence scoreSeq = DOTween.Sequence();
+        scoreSeq.Append(popup.transform.DOScale(Vector3.one * 1.5f, 0.4f).SetEase(Ease.OutBack))
+                .Join(popup.transform.DOMoveY(popup.transform.position.y + 100f, 1f).SetEase(Ease.OutQuad))
+                .AppendInterval(0.5f)
+                .OnComplete(() =>
+                {
+                    popup.SetActive(false);
+                    popupPool.Enqueue(popup);
+                });
+        currentScore += scoreToAdd;
+        totalScoreText.text = "Score: " + currentScore;
     }
 }
