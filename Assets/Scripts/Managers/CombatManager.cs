@@ -141,7 +141,7 @@ public class CombatManager : MonoBehaviour
         GamePhaseManager.Instance.SetPhase(GamePhase.Idle); // or GameOver phase if needed
 
         OnCombatEnd?.Invoke();
-        Debug.Log("Combat ended due to failure.");
+        // Debug.Log("Combat ended due to failure.");
     }
 
     public int GetCurrentCharges() => currentCharges;
