@@ -1217,11 +1217,10 @@ MonoBehaviour:
   arrivalThreshold: 0.05
   burstHeight: 1.5
   burstDuration: 0.25
-  radiusIndicator: {fileID: 256834501}
-  sliceRadius: 2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 2048
+  sliceRadius: 2
 --- !u!114 &1175359674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1235,6 +1234,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1175359675}
+  radiusIndicator: {fileID: 256834501}
+  sliceRadius: 2
+  characterVisual: {fileID: 1769906325}
 --- !u!4 &1175359675
 Transform:
   m_ObjectHideFlags: 0
@@ -1727,6 +1729,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 2048
+  radiusIndicator: {fileID: 0}
 --- !u!114 &1400586203
 MonoBehaviour:
   m_ObjectHideFlags: 0

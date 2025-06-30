@@ -12,10 +12,12 @@ public class CombatHandler : MonoBehaviour
     [SerializeField] private float slashRadius = 4f;
     [SerializeField] private float dashSpeed = 10f;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private Transform radiusIndicator;
 
     private Camera mainCam;
     private Vector2 swipeStartScreen;
     private bool isSwiping = false;
+    private bool hovering = true;
 
     void Awake()
     {
@@ -56,6 +58,9 @@ public class CombatHandler : MonoBehaviour
         HandleSwipe(swipeStartScreen, pos);
         CombatManager.Instance.UseCharge(); // Use a charge after a successful swipe
         GamePhaseManager.Instance.SetInputLock(true); // Unlock input after swipe
+
+        // playerContext.SetAnimationState(AnimationState.None);
+        playerContext.StopBurstingAnimation();
     }
 
     void HandleSwipe(Vector2 swipeStartScreen, Vector2 swipeEndScreen)
@@ -72,7 +77,18 @@ public class CombatHandler : MonoBehaviour
         direction.Normalize();
         Vector3 rawTarget = playerTransform.position + direction * Mathf.Min(distance, slashRadius);
         Vector3 clampedTarget = rawTarget;
-        if (clampedTarget.y < 0f) clampedTarget.y = 0f;
+
+        // If the dash would go underground, clamp to y=0 intersection
+        if (rawTarget.y < 0f)
+        {
+            Vector3 start = playerTransform.position;
+            Vector3 end = rawTarget;
+            float t = (0f - start.y) / (end.y - start.y); // Linear interpolation factor to y=0
+            t = Mathf.Clamp01(t - 0.01f); // Stop just above ground
+            clampedTarget = Vector3.Lerp(start, end, t);
+            clampedTarget.y = 0f;
+        }
+
         // Curve midpoint for style
         Vector3 midpoint = (playerTransform.position + clampedTarget) / 2f;
         Vector3 perpendicular = Vector3.Cross(direction, Vector3.forward).normalized;

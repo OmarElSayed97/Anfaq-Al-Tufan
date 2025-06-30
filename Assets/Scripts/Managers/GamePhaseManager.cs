@@ -7,8 +7,8 @@ public class GamePhaseManager : MonoBehaviour
     public static GamePhaseManager Instance { get; private set; }
 
     [Header("Debug Info")]
-    [SerializeField, ReadOnly] private GamePhase currentPhaseDebug;
-    [SerializeField, ReadOnly] private bool isInputLockedDebug;
+    [SerializeField] private GamePhase currentPhaseDebug;
+    [SerializeField] private bool isInputLockedDebug;
 
     public GamePhase CurrentPhase { get; private set; } = GamePhase.TunnelDrawing; // Default starting phase
     public bool IsInputLocked { get; private set; }
@@ -61,7 +61,6 @@ public class GamePhaseManager : MonoBehaviour
             case GamePhase.Idle: return new IdleState();
             case GamePhase.TunnelDrawing: return new TunnelDrawingState(tunnelDrawer);
             case GamePhase.TunnelNavigation: return new TunnelNavigationState(tunnelNavigator);
-            case GamePhase.Hovering: return new HoveringState();
             case GamePhase.Combat: return new CombatState(combatHandler);
             default: return null;
         }

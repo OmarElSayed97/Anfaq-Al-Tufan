@@ -48,6 +48,7 @@ public class TunnelDrawer : MonoBehaviour
             playerContext.CurrentLocation != PlayerLocation.AboveGround ||
             playerContext.IsAnimating || GamePhaseManager.Instance.IsInputLocked)
         {
+            Debug.LogError("Cannot start drawing tunnel in current state.");
             return;
         }
         float playerX = playerTransform.position.x;
@@ -63,6 +64,7 @@ public class TunnelDrawer : MonoBehaviour
         tunnelNavigator.StartNavigation(ParabolaUtility.GetParabolaPoints(startPoint, controlPoint, endPoint, curveResolution));
         GamePhaseManager.Instance.SetPhase(GamePhase.TunnelNavigation);
         isDrawing = false;
+        playerContext.StopBurstingAnimation();
         Debug.Log("Tunnel finalized.");
     }
 
@@ -73,6 +75,7 @@ public class TunnelDrawer : MonoBehaviour
             playerContext.CurrentLocation != PlayerLocation.AboveGround ||
             playerContext.IsAnimating || GamePhaseManager.Instance.IsInputLocked)
         {
+            Debug.LogError("Cannot draw tunnel in current state.");
             return;
         }
 

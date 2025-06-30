@@ -1,8 +1,8 @@
-// TunnelNavigator.cs
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using System.Collections;
+using Unity.VisualScripting;
 
 public class TunnelNavigator : MonoBehaviour
 {
@@ -15,20 +15,18 @@ public class TunnelNavigator : MonoBehaviour
     public float arrivalThreshold = 0.05f;
     public float burstHeight = 1.5f;
     public float burstDuration = 0.25f;
-    public Transform radiusIndicator;
-    public float sliceRadius = 4f;
     public LayerMask enemyLayer;
 
     private List<Vector3> path;
     private int currentIndex = 0;
     private bool isNavigating = false;
-    private Tween hoverTween;
     private bool hovering = false;
     private float lastUndergroundY;
     private float previousY;
     private float deepestY;
     private bool hasRecordedBurstDepth;
     private bool enemiesChecked;
+    public float sliceRadius = 4f;
 
     public void StartNavigation(Vector3[] tunnelPath)
     {
@@ -112,6 +110,7 @@ public class TunnelNavigator : MonoBehaviour
                 if (currentIndex >= path.Count)
                 {
                     isNavigating = false;
+                    playerContext.SetAnimationState(AnimationState.Bursting);
                     StartCoroutine(HandleBurst());
                     // DecideNextPhase();
                 }
@@ -136,18 +135,12 @@ public class TunnelNavigator : MonoBehaviour
     {
         playerContext.SetAnimationState(AnimationState.Bursting);
 
-         // Camera shake
+        // Camera shake (keep here, as it's gameplay feedback)
         CameraShaker.Instance.Shake();
 
-        // Show and scale up the radius indicator
-        float diameter = sliceRadius * 2f;
-        radiusIndicator.localScale = Vector3.zero;
-        radiusIndicator.gameObject.SetActive(true);
-        radiusIndicator.DOScale(new Vector3(diameter, diameter, 1f), 0.4f)
-            .SetEase(Ease.OutBack);
-        radiusIndicator.DORotate(new Vector3(0f, 0f, 360f), 4f, RotateMode.FastBeyond360).SetEase(Ease.Linear)
-        .SetLoops(-1, LoopType.Incremental);
+        playerContext.PlayBurstingAnimation();
 
+        // Animate handled by PlayerContextManager's OnBursting/OnHovering
         characterVisual.DOLocalRotate(new Vector3(0, 0, 360), 0.4f, RotateMode.FastBeyond360).SetEase(Ease.InOutQuad)
         .OnComplete(() =>
         {
@@ -168,13 +161,9 @@ public class TunnelNavigator : MonoBehaviour
             yield return null;
         }
 
-        // Hover animation
+        // Set to hovering state, animation handled by PlayerContextManager
         playerContext.SetAnimationState(AnimationState.Hovering);
-        hoverTween = characterVisual.DOMoveY(characterVisual.position.y + 0.15f, 0.5f)
-            .SetLoops(-1, LoopType.Yoyo)
-            .SetEase(Ease.InOutSine);
-
-        GamePhaseManager.Instance.SetInputLock(false);
+        
         hovering = true;
         DecideNextPhase();
 
@@ -183,24 +172,14 @@ public class TunnelNavigator : MonoBehaviour
 
     void EndHover(GamePhase nextPhase)
     {
-        if (hoverTween != null && hoverTween.IsActive())
-            hoverTween.Kill();
-
         characterVisual.localPosition = Vector3.zero;
         characterVisual.localRotation = Quaternion.Euler(Vector3.zero);
         characterVisual.DOKill();
-        if (radiusIndicator != null && radiusIndicator.gameObject.activeSelf)
-        {
-            radiusIndicator.DOKill(); // Stops rotation and scaling tweens
-
-            radiusIndicator.DOScale(Vector3.zero, 0.3f)
-                .SetEase(Ease.InBack)
-                .OnComplete(() => radiusIndicator.gameObject.SetActive(false));
-        }
 
         playerContext.SetAnimationState(AnimationState.None);
         GamePhaseManager.Instance.SetPhase(nextPhase);
         hovering = false;
+        GamePhaseManager.Instance.SetInputLock(false); // Unlock input after hover
     }
 
     bool AreEnemiesNearby()
