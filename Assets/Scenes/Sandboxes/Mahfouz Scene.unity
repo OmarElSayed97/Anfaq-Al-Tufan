@@ -1077,6 +1077,16 @@ MonoBehaviour:
   attackRange: 3
   damage: 1
   UI: {fileID: 0}
+  patrolSpeed: 3
+  minPatrolDuration: 1
+  maxPatrolDuration: 4
+  minIdleTime: 1
+  maxIdleTime: 2
+  leftBound: -9
+  rightBound: 9
+  projectilePrefab: {fileID: 7233255296511550349, guid: 4f82f64c19be19e4a9fd074c1b5b4915, type: 3}
+  projectileSpeed: 5
+  player: {fileID: 1175359672}
 --- !u!1 &863220787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1217,9 +1227,9 @@ GameObject:
   - component: {fileID: 1175359673}
   - component: {fileID: 1175359676}
   - component: {fileID: 1175359677}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
