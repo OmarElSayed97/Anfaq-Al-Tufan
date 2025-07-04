@@ -9,10 +9,10 @@ public class CombatManager : MonoBehaviour
     public int maxCharges = 3;
     public float combatDuration = 10f;
 
-    private List<Enemy> activeEnemies = new List<Enemy>();
+    private List<BaseEnemy> activeEnemies = new List<BaseEnemy>();
     [SerializeField] private int currentCharges;
     private float timeRemaining;
-    private bool combatActive = false;
+    public bool combatActive = false;
 
     public delegate void CombatEvent();
     public event CombatEvent OnCombatStart;
@@ -36,7 +36,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void StartCombat(List<Enemy> enemies, int charges)
+    public void StartCombat(List<BaseEnemy> enemies, int charges)
     {
         if (enemies == null || enemies.Count == 0)
         {
@@ -45,7 +45,7 @@ public class CombatManager : MonoBehaviour
             return;
         }
 
-        activeEnemies = new List<Enemy>(enemies);
+        activeEnemies = new List<BaseEnemy>(enemies);
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled += HandleEnemyKilled;
@@ -76,7 +76,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyKilled(Enemy enemy)
+    private void HandleEnemyKilled(BaseEnemy enemy)
     {
         if (activeEnemies.Contains(enemy))
         {
@@ -86,7 +86,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyFired(Enemy enemy)
+    private void HandleEnemyFired(BaseEnemy enemy)
     {
         Debug.Log("Player hit by enemy!");
         EndCombatImmediate(); // this is a failure — enemy fired
