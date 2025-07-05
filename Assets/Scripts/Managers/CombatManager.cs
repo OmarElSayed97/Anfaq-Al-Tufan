@@ -8,9 +8,10 @@ public class CombatManager : MonoBehaviour
     [Header("Combat Settings")]
     public int maxCharges = 3;
     public float combatDuration = 10f;
+
+    private List<BaseEnemy> activeEnemies = new List<BaseEnemy>();
     [Header("UI")]
     [SerializeField] private GameObject combatUI;
-    private List<Enemy> activeEnemies = new List<Enemy>();
     [SerializeField] private int currentCharges;
     public int CurrentCharges
     {
@@ -23,7 +24,7 @@ public class CombatManager : MonoBehaviour
     }
     public event System.Action<int> OnChargesChanged;
     private float timeRemaining;
-    private bool combatActive = false;
+    public bool combatActive = false;
 
     public delegate void CombatEvent();
     public event CombatEvent OnCombatStart;
@@ -47,7 +48,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void StartCombat(List<Enemy> enemies, int charges)
+    public void StartCombat(List<BaseEnemy> enemies, int charges)
     {
 
         if (enemies == null || enemies.Count == 0)
@@ -56,8 +57,9 @@ public class CombatManager : MonoBehaviour
             EndCombat();
             return;
         }
+
+        activeEnemies = new List<BaseEnemy>(enemies);
         combatUI.SetActive(true);
-        activeEnemies = new List<Enemy>(enemies);
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled += HandleEnemyKilled;
@@ -88,7 +90,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyKilled(Enemy enemy)
+    private void HandleEnemyKilled(BaseEnemy enemy)
     {
         if (activeEnemies.Contains(enemy))
         {
@@ -98,7 +100,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyFired(Enemy enemy)
+    private void HandleEnemyFired(BaseEnemy enemy)
     {
         Debug.Log("Player hit by enemy!");
         EndCombatImmediate(); // this is a failure — enemy fired

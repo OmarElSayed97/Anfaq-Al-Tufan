@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 [RequireComponent(typeof(Animator))]
 public abstract class BaseEnemy : MonoBehaviour
@@ -77,6 +78,8 @@ public abstract class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(int amount)
     {
+        Debug.Log("Enemy Take Damage");   
+        StartCoroutine(FlashEffect());
         if (isDead) return;
 
         currentHealth -= amount;
@@ -87,7 +90,14 @@ public abstract class BaseEnemy : MonoBehaviour
             Die();
         }
     }
-
+    public IEnumerator FlashEffect()
+    {
+        // Example flash effect
+        Debug.Log("Enemy flash effect triggered");
+        GetComponent<SpriteRenderer>().material.SetInt("_Flash", 1);
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().material.SetInt("_Flash", 0);
+    }
     protected virtual void Die()
     {
         isDead = true;

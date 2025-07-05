@@ -1,11 +1,12 @@
 // Enemy.cs
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
     [Header("Stats")]
-    public int maxHealth = 1;
+    public int maxHealth = 10;
     public float countdownDuration = 5f;
     public float attackRange = 5f;
     public int damage = 1;
@@ -62,15 +63,22 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        StartCoroutine(FlashEffect());
         if (isDead) return;
-
         currentHealth -= amount;
         if (currentHealth <= 0)
         {
             Die();
         }
     }
-
+    public IEnumerator FlashEffect()
+    {
+        // Example flash effect
+        Debug.Log("Enemy flash effect triggered");
+        GetComponent<SpriteRenderer>().material.SetInt("_Flash" , 1) ;
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().material.SetInt("_Flash" , 0) ;
+    }
     void Die()
     {
         isDead = true;

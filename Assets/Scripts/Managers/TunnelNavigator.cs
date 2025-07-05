@@ -187,11 +187,11 @@ public class TunnelNavigator : MonoBehaviour
         if (!enemiesChecked)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerContext.playerTransform.position, sliceRadius, enemyLayer);
-            List<Enemy> enemiesInRange = new List<Enemy>();
+            List<BaseEnemy> enemiesInRange = new List<BaseEnemy>();
 
             foreach (var col in colliders)
             {
-                Enemy enemy = col.GetComponent<Enemy>();
+                BaseEnemy enemy = col.GetComponent<BaseEnemy>();
                 if (enemy != null && enemy.IsAlive())
                     enemiesInRange.Add(enemy);
             }

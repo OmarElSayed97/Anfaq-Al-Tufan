@@ -916,7 +916,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: de6edfd5e90489f498039515e7bd7159, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1777,6 +1777,7 @@ MonoBehaviour:
   maxCharges: 3
   combatDuration: 10
   currentCharges: 0
+  combatActive: 0
 --- !u!1 &1566787983
 GameObject:
   m_ObjectHideFlags: 0
