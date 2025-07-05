@@ -27,11 +27,26 @@ public class NormalEnemy : BaseEnemy
     {
         base.Start();
         SetRandomPatrol();
-        // StartCountdown(); // Removed: countdown now managed by CombatManager
+        // StartCountdown(); // Removed: shooting timer handled by CombatManager
     }
 
     protected override void HandleState()
     {
+        // Prevent patrolling while in combat and player is above ground
+        bool playerAbove = false;
+        if (player != null)
+        {
+            var pcm = player.GetComponent<PlayerContextManager>();
+            if (pcm != null)
+                playerAbove = pcm.CurrentLocation == PlayerLocation.AboveGround;
+        }
+        if (playerAbove)
+        {
+            AimAtPlayer();
+            currentState = EnemyState.Idle;
+            SetAnimation(EnemyAnimationState.Idle);
+            return;
+        }
         if (currentState == EnemyState.Patrolling)
         {
             Patrol();
@@ -101,7 +116,7 @@ public class NormalEnemy : BaseEnemy
 
     protected override void HandleCountdown()
     {
-        // Removed: countdown logic now managed by CombatManager
+        // Removed: shooting timer logic handled by CombatManager
     }
 
     private void AimAtPlayer()

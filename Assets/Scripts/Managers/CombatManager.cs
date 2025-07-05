@@ -55,7 +55,7 @@ public class CombatManager : MonoBehaviour
         if (timeRemaining <= 0f)
         {
             Debug.Log("Combat time ended.");
-            EndCombat(); // time ran out, but not a fail
+            EndCombatImmediate(); // time ran out, but not a fail
         }
     }
     private void UpdateCombatTimerUI(float time)
@@ -215,7 +215,7 @@ public class CombatManager : MonoBehaviour
         GamePhaseManager.Instance.SetPhase(GamePhase.Idle); // or GameOver phase if needed
         
         OnCombatEnd?.Invoke();
-        // Debug.Log("Combat ended due to failure.");
+        Debug.Log("Combat ended due to failure.");
     }
 
     public int GetCurrentCharges() => currentCharges;

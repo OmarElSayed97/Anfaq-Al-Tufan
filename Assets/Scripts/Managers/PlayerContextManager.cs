@@ -74,6 +74,7 @@ public class PlayerContextManager : MonoBehaviour
 
     private void OnAttacking()
     {
+        GetComponent<PlayerHitbox>().isActive = true;
         StopBurstingAnimation();
         if (hoverTween != null && hoverTween.IsActive())
             StopHoveringAnimation(hoverTween);
