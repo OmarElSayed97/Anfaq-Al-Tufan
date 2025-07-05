@@ -22,6 +22,12 @@ public class TunnelDrawer : MonoBehaviour
     private Vector3 controlPoint;
     [SerializeField] private bool isDrawing = false;
 
+    [Header("UI")]
+    [SerializeField] private TunnelStatsUI tunnelStatsUI;
+
+    private float maxDepth = 0f;
+    private float horizontalDistance = 0f;
+
     void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -33,7 +39,10 @@ public class TunnelDrawer : MonoBehaviour
         InputManager.Instance.swipePressStarted += OnTunnelDrawStart;
         InputManager.Instance.swipePressEnded += OnTunnelDrawEnd;
         lineRenderer.positionCount = 0;
-    } 
+        maxDepth = 0f;
+        horizontalDistance = 0f;
+        
+    }
 
     public void OnExit()
     {
@@ -43,11 +52,13 @@ public class TunnelDrawer : MonoBehaviour
 
     void OnTunnelDrawStart(Vector2 pos)
     {
+        tunnelStatsUI.Show(true);
         Debug.Log("Started drawing");
         if (GamePhaseManager.Instance.CurrentPhase != GamePhase.TunnelDrawing ||
             playerContext.CurrentLocation != PlayerLocation.AboveGround ||
             playerContext.IsAnimating || GamePhaseManager.Instance.IsInputLocked)
         {
+            Debug.LogError("Cannot start drawing tunnel in current state.");
             return;
         }
         float playerX = playerTransform.position.x;
@@ -59,10 +70,12 @@ public class TunnelDrawer : MonoBehaviour
     void OnTunnelDrawEnd(Vector2 pos)
     {
         if (!isDrawing) return;
+        tunnelStatsUI.Show(false);
         GamePhaseManager.Instance.SetInputLock(true);
         tunnelNavigator.StartNavigation(ParabolaUtility.GetParabolaPoints(startPoint, controlPoint, endPoint, curveResolution));
         GamePhaseManager.Instance.SetPhase(GamePhase.TunnelNavigation);
         isDrawing = false;
+        playerContext.StopBurstingAnimation();
         Debug.Log("Tunnel finalized.");
     }
 
@@ -73,9 +86,9 @@ public class TunnelDrawer : MonoBehaviour
             playerContext.CurrentLocation != PlayerLocation.AboveGround ||
             playerContext.IsAnimating || GamePhaseManager.Instance.IsInputLocked)
         {
+            Debug.LogError("Cannot draw tunnel in current state.");
             return;
         }
-
         // Determine if input is still pressed
         bool isPressed = false;
         Vector2 dragWorld = Vector2.zero;
@@ -98,14 +111,12 @@ public class TunnelDrawer : MonoBehaviour
 
         if (!isPressed)
         {
-            // Input released, finalize tunnel if drawing
             if (isDrawing)
             {
                 OnTunnelDrawEnd(dragWorld);
             }
             return;
         }
-
         // Only update preview while input is pressed
         float dragX = Mathf.Clamp(dragWorld.x - startPoint.x, -maxCurveWidth, maxCurveWidth);
         Vector3 rawEnd = startPoint + new Vector3(dragX, 0f, 0f);
@@ -116,18 +127,47 @@ public class TunnelDrawer : MonoBehaviour
         float safeMaxX = rightWorld.x - edgePadding;
         float clampedX = Mathf.Clamp(rawEnd.x, safeMinX, safeMaxX);
         endPoint = new Vector3(clampedX, 0f, 0f);
+
         float dragY = Mathf.Clamp(dragWorld.y, -maxCurveDepth, 0f);
         if (Mathf.Abs(dragY) < minCurveDepth)
             dragY = -minCurveDepth;
+
         Vector3 mid = (startPoint + endPoint) / 2f;
         controlPoint = new Vector3(mid.x, dragY, 0f);
         Vector3[] points = ParabolaUtility.GetParabolaPoints(startPoint, controlPoint, endPoint, curveResolution);
 
+        // Update stats based on lowest Y point
+        Vector3 deepestPoint = points[0];
+        foreach (var point in points)
+        {
+            if (point.y < deepestPoint.y)
+                deepestPoint = point;
+        }
+
+        UpdateTunnelStats(deepestPoint);
         DrawPreview(points);
+
+
     }
+
+    void UpdateTunnelStats(Vector3 currentPoint)
+    {
+        // Update horizontal distance
+        horizontalDistance = Mathf.Abs(currentPoint.x - startPoint.x);
+
+        float currentDepth = Mathf.Abs(currentPoint.y);
+        maxDepth = currentDepth;
+
+        Debug.Log($"Current Depth: {currentDepth} | Horizontal Distance: {horizontalDistance}");
+
+        // Update UI
+        tunnelStatsUI.UpdateStats(horizontalDistance, maxDepth);
+    }
+
 
     void DrawPreview(Vector3[] points)
     {
+
         lineRenderer.positionCount = points.Length;
         lineRenderer.SetPositions(points);
     }
