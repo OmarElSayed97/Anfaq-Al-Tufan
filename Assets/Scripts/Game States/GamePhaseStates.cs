@@ -76,10 +76,3 @@ public class CombatState : GamePhaseState
         combatHandler.OnExit();
     }
 }
-
-public class HoveringState : GamePhaseState
-{
-    public override void OnEnter() { Debug.Log("[GamePhaseState] Enter Hovering"); }
-    public override void OnUpdate() { }
-    public override void OnExit() { Debug.Log("[GamePhaseState] Exit Hovering"); }
-}
