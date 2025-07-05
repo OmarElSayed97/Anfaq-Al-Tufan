@@ -27,7 +27,7 @@ public class NormalEnemy : BaseEnemy
     {
         base.Start();
         SetRandomPatrol();
-        StartCountdown();
+        // StartCountdown(); // Removed: countdown now managed by CombatManager
     }
 
     protected override void HandleState()
@@ -101,26 +101,7 @@ public class NormalEnemy : BaseEnemy
 
     protected override void HandleCountdown()
     {
-        if (player == null) return;
-
-        PlayerContextManager playerContextManager = player.GetComponent<PlayerContextManager>();
-        if (playerContextManager == null) return;
-
-        if (playerContextManager.CurrentLocation == PlayerLocation.AboveGround)
-        {
-            // Stop and aim at the player
-            currentState = EnemyState.Idle;
-            AimAtPlayer();
-            // Optionally, you can set an aiming animation here
-            // SetAnimation(EnemyAnimationState.Aim);
-            // Do not patrol or idle, just aim until attack
-            base.HandleCountdown();
-        }
-        else
-        {
-            // Player is underground, reset cooldown
-            countdownRemaining = countdownDuration;
-        }
+        // Removed: countdown logic now managed by CombatManager
     }
 
     private void AimAtPlayer()
@@ -129,12 +110,6 @@ public class NormalEnemy : BaseEnemy
         Vector3 toPlayer = player.transform.position - transform.position;
         moveDirection = toPlayer.x < 0 ? -1 : 1;
         UpdateSpriteDirection();
-    }
-
-    protected override void OnCountdownFinished()
-    {
-        base.OnCountdownFinished();
-        currentState = EnemyState.Attacking;
     }
 
     private void PerformAttack()
@@ -149,8 +124,8 @@ public class NormalEnemy : BaseEnemy
 
         // After attacking, go back to idle then resume patrol
         SetIdle();
-        countdownRemaining = countdownDuration;
-        StartCountdown(); // restart countdown for next attack
+        // countdownRemaining = countdownDuration; // Removed
+        // StartCountdown(); // Removed
     }
 
     private void FireProjectileAtPlayer()
