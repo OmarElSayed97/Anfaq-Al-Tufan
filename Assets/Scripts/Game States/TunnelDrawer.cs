@@ -158,7 +158,6 @@ public class TunnelDrawer : MonoBehaviour
         float currentDepth = Mathf.Abs(currentPoint.y);
         maxDepth = currentDepth;
 
-        Debug.Log($"Current Depth: {currentDepth} | Horizontal Distance: {horizontalDistance}");
 
         // Update UI
         tunnelStatsUI.UpdateStats(horizontalDistance, maxDepth);

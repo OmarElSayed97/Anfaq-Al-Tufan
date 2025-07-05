@@ -10,7 +10,7 @@ public abstract class BaseEnemy : MonoBehaviour
     public EnemyAttackType attackType = EnemyAttackType.Melee;
 
     [Header("Stats")]
-    public int maxHealth = 10;
+    public int maxHealth = 1;
     public float countdownDuration = 5f;
     public float attackRange = 3f;
     public int damage = 1;
@@ -95,7 +95,7 @@ public abstract class BaseEnemy : MonoBehaviour
         // Example flash effect
         Debug.Log("Enemy flash effect triggered");
         GetComponent<SpriteRenderer>().material.SetInt("_Flash", 1);
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
         GetComponent<SpriteRenderer>().material.SetInt("_Flash", 0);
     }
     protected virtual void Die()

@@ -86,7 +86,8 @@ public class CombatManager : MonoBehaviour
         if (currentCharges <= 0)
         {
             Debug.Log("No charges left.");
-            EndCombat();
+            Invoke(nameof(EndCombat), 0.1f);
+           // EndCombat();
         }
     }
 
