@@ -8,9 +8,20 @@ public class CombatManager : MonoBehaviour
     [Header("Combat Settings")]
     public int maxCharges = 3;
     public float combatDuration = 10f;
-
+    [Header("UI")]
+    [SerializeField] private GameObject combatUI;
     private List<Enemy> activeEnemies = new List<Enemy>();
     [SerializeField] private int currentCharges;
+    public int CurrentCharges
+    {
+        get => currentCharges;
+        set
+        {
+            currentCharges = value;
+            OnChargesChanged?.Invoke(currentCharges);
+        }
+    }
+    public event System.Action<int> OnChargesChanged;
     private float timeRemaining;
     private bool combatActive = false;
 
@@ -38,13 +49,14 @@ public class CombatManager : MonoBehaviour
 
     public void StartCombat(List<Enemy> enemies, int charges)
     {
+
         if (enemies == null || enemies.Count == 0)
         {
             Debug.LogWarning("Combat started with no enemies.");
             EndCombat();
             return;
         }
-
+        combatUI.SetActive(true);
         activeEnemies = new List<Enemy>(enemies);
         foreach (var enemy in activeEnemies)
         {
@@ -53,7 +65,7 @@ public class CombatManager : MonoBehaviour
             enemy.StartCountdown();
         }
 
-        currentCharges = charges;
+        CurrentCharges = charges;
         timeRemaining = combatDuration;
         combatActive = true;
         GamePhaseManager.Instance.SetPhase(GamePhase.Combat);
@@ -66,7 +78,7 @@ public class CombatManager : MonoBehaviour
     {
         if (!combatActive) return;
 
-        currentCharges--;
+        CurrentCharges--;
         Debug.Log($"Charge used. Remaining: {currentCharges}");
 
         if (currentCharges <= 0)
@@ -129,7 +141,6 @@ public class CombatManager : MonoBehaviour
     public void EndCombatImmediate()
     {
         if (!combatActive) return;
-
         combatActive = false;
         foreach (var enemy in activeEnemies)
         {
@@ -139,7 +150,7 @@ public class CombatManager : MonoBehaviour
 
         activeEnemies.Clear();
         GamePhaseManager.Instance.SetPhase(GamePhase.Idle); // or GameOver phase if needed
-
+        
         OnCombatEnd?.Invoke();
         // Debug.Log("Combat ended due to failure.");
     }

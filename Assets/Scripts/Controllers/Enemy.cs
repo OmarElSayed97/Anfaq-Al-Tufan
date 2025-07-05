@@ -76,7 +76,7 @@ public class Enemy : MonoBehaviour
         isDead = true;
         isCountingDown = false;
         OnEnemyKilled?.Invoke(this);
-        // UI.PlayKillFeedback(150);
+        UI.PlayKillFeedback(150, transform.position);
         Debug.Log("Enemy died");
         transform.localScale = Vector2.zero; // or pool it later
     }
