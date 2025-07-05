@@ -77,6 +77,9 @@ public class CombatHandler : MonoBehaviour
             // Debug.Log("Swipe too short.");
             return;
         }
+
+        playerContext.SetAnimationState(AnimationState.Attacking);
+
         direction.Normalize();
         Vector3 rawTarget = playerTransform.position + direction * Mathf.Min(distance, slashRadius);
         Vector3 clampedTarget = rawTarget;
@@ -121,6 +124,7 @@ public class CombatHandler : MonoBehaviour
                 if (dashTrail != null) dashTrail.enabled = false;
                 CombatManager.Instance.ResumeAllEnemyCountdowns();
                 GamePhaseManager.Instance.SetInputLock(false); // Unlock input after swipe
+                playerContext.SetAnimationState(AnimationState.None);
             });
     }
 

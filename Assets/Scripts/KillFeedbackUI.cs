@@ -43,7 +43,7 @@ public class KillFeedbackUI : MonoBehaviour
         Sequence scoreSeq = DOTween.Sequence();
         scoreSeq.Append(popup.transform.DOScale(Vector3.one * 1.5f, 0.4f).SetEase(Ease.OutBack))
                 .Join(popup.transform.DOMoveY(popup.transform.position.y + 100f, 1f).SetEase(Ease.OutQuad))
-                .AppendInterval(0.5f)
+                // .AppendInterval(0.5f)
                 .OnComplete(() =>
                 {
                     popup.SetActive(false);

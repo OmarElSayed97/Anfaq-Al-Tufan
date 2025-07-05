@@ -4,14 +4,14 @@ public class PlayerHitbox : MonoBehaviour
 {
 private void OnTriggerEnter2D(Collider2D other)
 {
-    Debug.Log(other.name);
+    // Debug.Log(other.name);
     if (other.CompareTag("Enemy"))
         {
-    Debug.Log(other.name+"Hello");
+            // Debug.Log(other.name+"Hello");
             BaseEnemy enemy = other.GetComponent<BaseEnemy>();
-            if (enemy != null && CombatManager.Instance.IsCombatActive())
+            if (enemy != null && CombatManager.Instance.IsCombatActive() && GetComponent<PlayerContextManager>().CurrentAnimationState == AnimationState.Attacking)
             {
-    Debug.Log(other.name+ "HI");
+                // Debug.Log(other.name+ "HI");
                 if (enemy.IsAlive())
                 {
                     enemy.TakeDamage(1);

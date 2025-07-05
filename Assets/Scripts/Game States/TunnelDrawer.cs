@@ -54,16 +54,23 @@ public class TunnelDrawer : MonoBehaviour
     {
         tunnelStatsUI.Show(true);
         Debug.Log("Started drawing");
+
+        if (playerContext.CurrentLocation != PlayerLocation.AboveGround)
+        {
+            Debug.LogWarning("Player not above ground. Moving player above ground.");
+            Vector3 playerPos = playerTransform.position;
+            playerTransform.position = new Vector3(playerPos.x, 0.2f, playerPos.z);
+        }
         if (GamePhaseManager.Instance.CurrentPhase != GamePhase.TunnelDrawing ||
-            playerContext.CurrentLocation != PlayerLocation.AboveGround ||
             playerContext.IsAnimating || GamePhaseManager.Instance.IsInputLocked)
         {
             Debug.LogError("Cannot start drawing tunnel in current state.");
             return;
         }
         float playerX = playerTransform.position.x;
-        float startX = Mathf.Clamp(pos.x, playerX - startZoneWidth / 2f, playerX + startZoneWidth / 2f);
-        startPoint = new Vector3(startX, 0f, 0f);
+        // float startX = Mathf.Clamp(pos.x, playerX - startZoneWidth / 2f, playerX + startZoneWidth / 2f);
+        // startPoint = new Vector3(startX, 0f, 0f);
+        startPoint = new Vector3(playerX, 0f, 0f);
         isDrawing = true;
     }
 

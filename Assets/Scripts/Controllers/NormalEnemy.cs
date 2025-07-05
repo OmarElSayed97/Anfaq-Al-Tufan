@@ -106,10 +106,14 @@ public class NormalEnemy : BaseEnemy
         PlayerContextManager playerContextManager = player.GetComponent<PlayerContextManager>();
         if (playerContextManager == null) return;
 
-        
         if (playerContextManager.CurrentLocation == PlayerLocation.AboveGround)
         {
-            // Decrease countdown and attack normally
+            // Stop and aim at the player
+            currentState = EnemyState.Idle;
+            AimAtPlayer();
+            // Optionally, you can set an aiming animation here
+            // SetAnimation(EnemyAnimationState.Aim);
+            // Do not patrol or idle, just aim until attack
             base.HandleCountdown();
         }
         else
@@ -119,13 +123,19 @@ public class NormalEnemy : BaseEnemy
         }
     }
 
+    private void AimAtPlayer()
+    {
+        if (player == null) return;
+        Vector3 toPlayer = player.transform.position - transform.position;
+        moveDirection = toPlayer.x < 0 ? -1 : 1;
+        UpdateSpriteDirection();
+    }
+
     protected override void OnCountdownFinished()
     {
         base.OnCountdownFinished();
         currentState = EnemyState.Attacking;
     }
-
-
 
     private void PerformAttack()
     {

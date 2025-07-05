@@ -19,7 +19,8 @@ public enum AnimationState
     None,
     Traveling,
     Bursting,
-    Hovering
+    Hovering,
+    Attacking
 }
 
 

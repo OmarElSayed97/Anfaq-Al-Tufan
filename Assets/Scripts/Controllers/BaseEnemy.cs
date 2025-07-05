@@ -109,6 +109,7 @@ public abstract class BaseEnemy : MonoBehaviour
         Debug.Log($"{name} died");
 
         transform.localScale = Vector3.zero; // Placeholder — use pooling later
+        UI.PlayKillFeedback(150, transform.position);
     }
 
     protected virtual void OnCountdownFinished()
