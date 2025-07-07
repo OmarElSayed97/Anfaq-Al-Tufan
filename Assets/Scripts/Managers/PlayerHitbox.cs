@@ -10,7 +10,7 @@ public class PlayerHitbox : MonoBehaviour
             {
                 // Debug.Log(other.name+"Hello");
                 BaseEnemy enemy = other.GetComponent<BaseEnemy>();
-                if (enemy != null && CombatManager.Instance.IsCombatActive() && GetComponent<PlayerContextManager>().CurrentAnimationState == AnimationState.Attacking)
+                if (enemy != null && GetComponent<PlayerContextManager>().CurrentAnimationState == AnimationState.Attacking)
                 {
                     // Debug.Log(other.name+ "HI");
                     if (enemy.IsAlive() && isActive)

@@ -11,23 +11,18 @@ public abstract class BaseEnemy : MonoBehaviour
 
     [Header("Stats")]
     public int maxHealth = 1;
-    public float countdownDuration = 5f;
-    public float attackRange = 3f;
-    public int damage = 1;
 
     [Header("Runtime")]
     public KillFeedbackUI UI;
+    private Coroutine flashCoroutine;
 
     protected int currentHealth;
-    protected float countdownRemaining;
-    protected bool isCountingDown = false;
     protected bool isDead = false;
     protected EnemyState currentState = EnemyState.Idle;
 
     protected Animator animator;
 
     public event Action<BaseEnemy> OnEnemyKilled;
-    public event Action<BaseEnemy> OnEnemyCountdownFinished;
 
     protected virtual void Awake()
     {
@@ -37,7 +32,6 @@ public abstract class BaseEnemy : MonoBehaviour
     protected virtual void Start()
     {
         currentHealth = maxHealth;
-        countdownRemaining = countdownDuration;
         SetAnimation(EnemyAnimationState.Idle);
     }
 
@@ -46,7 +40,6 @@ public abstract class BaseEnemy : MonoBehaviour
         if (isDead) return;
 
         HandleState();
-        HandleCountdown();
     }
 
     protected virtual void HandleState()
@@ -54,32 +47,12 @@ public abstract class BaseEnemy : MonoBehaviour
         // To be overridden in subclasses for AI behavior
     }
 
-    protected virtual void HandleCountdown()
-    {
-        if (isCountingDown && !isDead)
-        {
-            countdownRemaining -= Time.deltaTime;
-            if (countdownRemaining <= 0f)
-            {
-                countdownRemaining = 0f;
-                isCountingDown = false;
-                OnCountdownFinished();
-            }
-        }
-    }
-
-    public virtual void StartCountdown() => isCountingDown = !isDead;
-    public virtual void PauseCountdown() => isCountingDown = false;
-    public virtual void ResumeCountdown()
-    {
-        if (!isDead && countdownRemaining > 0f)
-            isCountingDown = true;
-    }
-
     public virtual void TakeDamage(int amount)
     {
-        Debug.Log("Enemy Take Damage");   
-        StartCoroutine(FlashEffect());
+        Debug.Log("Enemy Take Damage");
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+        flashCoroutine = StartCoroutine(FlashEffect());
         if (isDead) return;
 
         currentHealth -= amount;
@@ -101,7 +74,6 @@ public abstract class BaseEnemy : MonoBehaviour
     protected virtual void Die()
     {
         isDead = true;
-        isCountingDown = false;
         currentState = EnemyState.Dead;
         SetAnimation(EnemyAnimationState.Die);
 
@@ -112,19 +84,12 @@ public abstract class BaseEnemy : MonoBehaviour
         UI.PlayKillFeedback(150, transform.position);
     }
 
-    protected virtual void OnCountdownFinished()
-    {
-        OnEnemyCountdownFinished?.Invoke(this);
-        Debug.Log($"{name} finished countdown and is attacking!");
-    }
-
     protected void SetAnimation(EnemyAnimationState state)
     {
         animator?.SetTrigger(state.ToString());
     }
 
     public bool IsAlive() => !isDead;
-    public float GetCountdownRemaining() => countdownRemaining;
     public int GetCurrentHealth() => currentHealth;
     public EnemyType GetEnemyType() => enemyType;
 }

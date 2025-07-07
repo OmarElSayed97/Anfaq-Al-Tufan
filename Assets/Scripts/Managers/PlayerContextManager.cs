@@ -82,7 +82,7 @@ public class PlayerContextManager : MonoBehaviour
 
     public void PlayBurstingAnimation()
     {
-        float diameter = sliceRadius * 2f;
+        float diameter = sliceRadius;
         radiusIndicator.localScale = Vector3.zero;
         radiusIndicator.gameObject.SetActive(true);
         radiusIndicator.DOScale(new Vector3(diameter, diameter, 1f), 0.4f)

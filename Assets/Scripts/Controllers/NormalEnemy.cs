@@ -114,11 +114,6 @@ public class NormalEnemy : BaseEnemy
         SetAnimation(EnemyAnimationState.Idle);
     }
 
-    protected override void HandleCountdown()
-    {
-        // Removed: shooting timer logic handled by CombatManager
-    }
-
     private void AimAtPlayer()
     {
         if (player == null) return;

@@ -115,7 +115,6 @@ public class CombatHandler : MonoBehaviour
             dashTrail.Clear();
             dashTrail.enabled = true;
         }
-        CombatManager.Instance.PauseAllEnemyCountdowns();
         playerTransform.DOPath(path, Vector3.Distance(playerTransform.position, clampedTarget) / dashSpeed, PathType.CatmullRom)
             .SetEase(Ease.OutSine)
             .OnComplete(() =>

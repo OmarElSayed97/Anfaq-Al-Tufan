@@ -121,8 +121,6 @@ public class CombatManager : MonoBehaviour
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled += HandleEnemyKilled;
-            enemy.OnEnemyCountdownFinished += HandleEnemyFired;
-            enemy.StartCountdown();
         }
 
         CurrentCharges = charges;
@@ -144,7 +142,7 @@ public class CombatManager : MonoBehaviour
         if (currentCharges <= 0)
         {
             Debug.Log("No charges left.");
-            Invoke(nameof(EndCombat), 0.1f);
+            EndCombat();
            // EndCombat();
         }
     }
@@ -155,40 +153,21 @@ public class CombatManager : MonoBehaviour
         {
             activeEnemies.Remove(enemy);
             enemy.OnEnemyKilled -= HandleEnemyKilled;
-            enemy.OnEnemyCountdownFinished -= HandleEnemyFired;
         }
 
         if (activeEnemies.Count == 0)
         {
             Debug.Log("All enemies defeated! Player wins!");
-            GamePhaseManager.Instance.SetPhase(GamePhase.GameWinState);
-        }
-    }
-
-
-    private void HandleEnemyFired(BaseEnemy enemy)
-    {
-        Debug.Log("Player hit by enemy!");
-        EndCombatImmediate(); // this is a failure — enemy fired
-    }
-
-    public void PauseAllEnemyCountdowns()
-    {
-        foreach (var enemy in activeEnemies)
-        {
-            enemy.PauseCountdown();
+            EndCombat(true);
         }
     }
 
     public void ResumeAllEnemyCountdowns()
     {
-        foreach (var enemy in activeEnemies)
-        {
-            enemy.ResumeCountdown();
-        }
+        
     }
 
-    public void EndCombat()
+    public void EndCombat(bool won = false)
     {
         if (!combatActive) return;
         if (timerText != null)
@@ -198,11 +177,14 @@ public class CombatManager : MonoBehaviour
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled -= HandleEnemyKilled;
-            enemy.OnEnemyCountdownFinished -= HandleEnemyFired;
         }
 
         activeEnemies.Clear();
-        GamePhaseManager.Instance.SetPhase(GamePhase.TunnelDrawing);
+        if (!won) {
+            Debug.Log("Combat ended without victory.");
+            GamePhaseManager.Instance.SetPhase(GamePhase.TunnelDrawing);
+        } else
+            GamePhaseManager.Instance.SetPhase(GamePhase.GameWinState);
 
         OnCombatEnd?.Invoke();
         Debug.Log("Combat ended — returning to Tunnel Drawing phase.");
@@ -215,7 +197,6 @@ public class CombatManager : MonoBehaviour
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled -= HandleEnemyKilled;
-            enemy.OnEnemyCountdownFinished -= HandleEnemyFired;
         }
 
         activeEnemies.Clear();
