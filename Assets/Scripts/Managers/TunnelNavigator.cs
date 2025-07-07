@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class TunnelNavigator : MonoBehaviour
 {
@@ -201,7 +200,7 @@ public class TunnelNavigator : MonoBehaviour
 
             if (enemiesInRange.Count > 0)
             {
-                CombatManager.Instance.StartCombat(enemiesInRange, charges);
+                CombatManager.Instance.StartCombat(charges);
                 enemiesChecked = true;
                 return true;
             }

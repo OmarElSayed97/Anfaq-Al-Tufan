@@ -80,8 +80,8 @@ public abstract class BaseEnemy : MonoBehaviour
         OnEnemyKilled?.Invoke(this);
         Debug.Log($"{name} died");
 
-        transform.localScale = Vector3.zero; // Placeholder — use pooling later
         UI.PlayKillFeedback(150, transform.position);
+        Destroy(gameObject, 0.1f);
     }
 
     protected void SetAnimation(EnemyAnimationState state)

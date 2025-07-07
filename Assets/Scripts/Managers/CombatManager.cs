@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CombatManager : MonoBehaviour
 {
@@ -10,16 +11,7 @@ public class CombatManager : MonoBehaviour
     public float combatDuration = 10f;
 
     private List<BaseEnemy> activeEnemies = new List<BaseEnemy>();
-    [Header("UI")]
-    [SerializeField] private GameObject combatUI;
-    [SerializeField] private TMPro.TextMeshProUGUI timerText;
-    [SerializeField] private Color normalColor = Color.white;
-    [SerializeField] private Color warningColor = Color.red;
-    [SerializeField] private float warningThreshold = 3f;
-    private Vector3 originalScale;
-    private bool isShaking = false;
-    [SerializeField] private float shakeDuration = 0.2f;
-    [SerializeField] private float shakeAmount = 0.1f;
+
     [SerializeField] private int currentCharges;
     public int CurrentCharges
     {
@@ -34,9 +26,13 @@ public class CombatManager : MonoBehaviour
     private float timeRemaining;
     public bool combatActive = false;
 
-    public delegate void CombatEvent();
-    public event CombatEvent OnCombatStart;
-    public event CombatEvent OnCombatEnd;
+    // General combat events
+    public event System.Action<float> OnTimerChanged;
+    public event System.Action<bool> OnCombatStateChanged;
+
+    [Header("Combat State Settings")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeAmount = 0.1f;
 
     void Awake()
     {
@@ -51,63 +47,22 @@ public class CombatManager : MonoBehaviour
         timeRemaining -= Time.deltaTime;
         timeRemaining = Mathf.Max(timeRemaining, 0f); // Clamp to zero
 
-        UpdateCombatTimerUI(timeRemaining);
+        // General event for timer change
+        OnTimerChanged?.Invoke(timeRemaining);
+
         if (timeRemaining <= 0f)
         {
             Debug.Log("Combat time ended.");
             EndCombatImmediate(); // time ran out, but not a fail
         }
     }
-    private void UpdateCombatTimerUI(float time)
+
+    public void StartCombat(int charges)
     {
-        if (timerText == null) return;
+        // General event: combat state changed (active)
+        OnCombatStateChanged?.Invoke(true);
 
-        timerText.text = Mathf.CeilToInt(time).ToString();
-
-        if (time < warningThreshold)
-        {
-            timerText.color = warningColor;
-            if (!isShaking)
-                StartCoroutine(ShakeTimer());
-        }
-        else
-        {
-            timerText.color = normalColor;
-            timerText.rectTransform.localScale = originalScale;
-            isShaking = false;
-        }
-    }
-    private System.Collections.IEnumerator ShakeTimer()
-    {
-        isShaking = true;
-        float elapsed = 0f;
-
-        while (elapsed < shakeDuration)
-        {
-            if (timerText == null) yield break;
-
-            Vector3 randomOffset = Random.insideUnitSphere * shakeAmount;
-            randomOffset.z = 0f; // UI text should not shake in Z
-            timerText.rectTransform.localScale = originalScale + randomOffset;
-
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        if (timerText != null)
-            timerText.rectTransform.localScale = originalScale;
-
-        isShaking = false;
-    }
-
-
-    public void StartCombat(List<BaseEnemy> enemies, int charges)
-    {
-        if (timerText != null)
-        {
-            timerText.gameObject.SetActive(true);
-            originalScale = timerText.rectTransform.localScale;
-        }
+        var enemies = FindObjectsByType<BaseEnemy>(FindObjectsSortMode.None).ToList();
 
         if (enemies == null || enemies.Count == 0)
         {
@@ -117,7 +72,6 @@ public class CombatManager : MonoBehaviour
         }
 
         activeEnemies = new List<BaseEnemy>(enemies);
-        combatUI.SetActive(true);
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled += HandleEnemyKilled;
@@ -126,9 +80,9 @@ public class CombatManager : MonoBehaviour
         CurrentCharges = charges;
         timeRemaining = combatDuration;
         combatActive = true;
+        OnTimerChanged?.Invoke(timeRemaining);
         GamePhaseManager.Instance.SetPhase(GamePhase.Combat);
 
-        OnCombatStart?.Invoke();
         Debug.Log("Combat started.");
     }
 
@@ -143,7 +97,6 @@ public class CombatManager : MonoBehaviour
         {
             Debug.Log("No charges left.");
             EndCombat();
-           // EndCombat();
         }
     }
 
@@ -162,16 +115,11 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void ResumeAllEnemyCountdowns()
-    {
-        
-    }
-
     public void EndCombat(bool won = false)
     {
         if (!combatActive) return;
-        if (timerText != null)
-            timerText.gameObject.SetActive(false);
+        // General event: combat state changed (inactive)
+        OnCombatStateChanged?.Invoke(false);
 
         combatActive = false;
         foreach (var enemy in activeEnemies)
@@ -186,7 +134,6 @@ public class CombatManager : MonoBehaviour
         } else
             GamePhaseManager.Instance.SetPhase(GamePhase.GameWinState);
 
-        OnCombatEnd?.Invoke();
         Debug.Log("Combat ended — returning to Tunnel Drawing phase.");
     }
 
@@ -200,9 +147,9 @@ public class CombatManager : MonoBehaviour
         }
 
         activeEnemies.Clear();
+        OnCombatStateChanged?.Invoke(false);
         GamePhaseManager.Instance.SetPhase(GamePhase.Idle); // or GameOver phase if needed
         
-        OnCombatEnd?.Invoke();
         Debug.Log("Combat ended due to failure.");
     }
 
