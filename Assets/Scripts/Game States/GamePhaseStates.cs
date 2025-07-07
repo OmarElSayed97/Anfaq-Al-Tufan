@@ -58,6 +58,20 @@ public class TunnelDrawingState : GamePhaseState
     }
 }
 
+public class GameWinState : GamePhaseState
+{
+    public override void OnEnter()
+    {
+        Debug.Log("Entered GameWinState.");
+        // Add win UI or transition logic here
+    }
+
+    public override void OnUpdate() { }
+    public override void OnExit() { }
+}
+
+
+
 public class CombatState : GamePhaseState
 {
     private CombatHandler combatHandler;

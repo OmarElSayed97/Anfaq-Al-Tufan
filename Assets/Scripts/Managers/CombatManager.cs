@@ -157,7 +157,14 @@ public class CombatManager : MonoBehaviour
             enemy.OnEnemyKilled -= HandleEnemyKilled;
             enemy.OnEnemyCountdownFinished -= HandleEnemyFired;
         }
+
+        if (activeEnemies.Count == 0)
+        {
+            Debug.Log("All enemies defeated! Player wins!");
+            GamePhaseManager.Instance.SetPhase(GamePhase.GameWinState);
+        }
     }
+
 
     private void HandleEnemyFired(BaseEnemy enemy)
     {
