@@ -23,7 +23,7 @@ public class TunnelNavigationState : GamePhaseState
     public override void OnEnter()
     {
         Debug.Log("[GamePhaseState] Enter TunnelNavigation");
-        tunnelNavigator.Initialize();
+        tunnelNavigator.OnEnter();
         // Optionally, you can reset or prepare the navigator here
     }
 
@@ -32,7 +32,7 @@ public class TunnelNavigationState : GamePhaseState
     public override void OnExit()
     {
         Debug.Log("[GamePhaseState] Exit TunnelNavigation");
-        tunnelNavigator.FinalizeNavigation();
+        tunnelNavigator.OnExit();
         // Optionally, clean up or reset navigator state here
     }
 }
@@ -66,7 +66,9 @@ public class GameWinState : GamePhaseState
         // Add win UI or transition logic here
     }
 
-    public override void OnUpdate() { }
+    public override void OnUpdate() { 
+        // Play animations or anything
+    }
     public override void OnExit() { }
 }
 

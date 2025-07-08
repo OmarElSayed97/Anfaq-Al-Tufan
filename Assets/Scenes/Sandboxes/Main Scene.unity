@@ -1226,10 +1226,10 @@ GameObject:
   m_Component:
   - component: {fileID: 736453119}
   - component: {fileID: 736453118}
-  - component: {fileID: 736453124}
   - component: {fileID: 736453121}
   - component: {fileID: 736453122}
   - component: {fileID: 736453123}
+  - component: {fileID: 736453124}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
@@ -1411,22 +1411,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 736453117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9084a843d5c2a774cb72110e340fe251, type: 3}
+  m_Script: {fileID: 11500000, guid: cb6f762f087ead14a9643130ffc3a232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 0
-  attackType: 1
-  maxHealth: 1
+  data: {fileID: 11400000, guid: b5e6c6fc41515b349b9c7732ba0832fd, type: 2}
   UI: {fileID: 220554172}
-  patrolSpeed: 3
-  minPatrolDuration: 1
-  maxPatrolDuration: 4
-  minIdleTime: 1
-  maxIdleTime: 2
-  leftBound: -9
-  rightBound: 9
-  projectilePrefab: {fileID: 7233255296511550349, guid: 4f82f64c19be19e4a9fd074c1b5b4915, type: 3}
-  projectileSpeed: 5
   player: {fileID: 1175359672}
 --- !u!1 &863220787
 GameObject:
@@ -3546,10 +3535,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1962860159}
   - component: {fileID: 1962860164}
-  - component: {fileID: 1962860163}
   - component: {fileID: 1962860162}
   - component: {fileID: 1962860161}
   - component: {fileID: 1962860160}
+  - component: {fileID: 1962860165}
   m_Layer: 11
   m_Name: Enemy (2)
   m_TagString: Enemy
@@ -3667,32 +3656,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1962860163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1962860158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9084a843d5c2a774cb72110e340fe251, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 0
-  attackType: 1
-  maxHealth: 1
-  UI: {fileID: 220554172}
-  patrolSpeed: 3
-  minPatrolDuration: 1
-  maxPatrolDuration: 4
-  minIdleTime: 1
-  maxIdleTime: 2
-  leftBound: -9
-  rightBound: 9
-  projectilePrefab: {fileID: 7233255296511550349, guid: 4f82f64c19be19e4a9fd074c1b5b4915, type: 3}
-  projectileSpeed: 5
-  player: {fileID: 1175359672}
 --- !u!212 &1962860164
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3748,6 +3711,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1962860165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962860158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6f762f087ead14a9643130ffc3a232, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: b5e6c6fc41515b349b9c7732ba0832fd, type: 2}
+  UI: {fileID: 220554172}
+  player: {fileID: 1175359672}
 --- !u!1 &2062862130
 GameObject:
   m_ObjectHideFlags: 0
@@ -3758,10 +3736,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2062862131}
   - component: {fileID: 2062862136}
-  - component: {fileID: 2062862135}
   - component: {fileID: 2062862134}
   - component: {fileID: 2062862133}
   - component: {fileID: 2062862132}
+  - component: {fileID: 2062862137}
   m_Layer: 11
   m_Name: Enemy (1)
   m_TagString: Enemy
@@ -3879,32 +3857,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2062862135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062862130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9084a843d5c2a774cb72110e340fe251, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 0
-  attackType: 1
-  maxHealth: 1
-  UI: {fileID: 220554172}
-  patrolSpeed: 3
-  minPatrolDuration: 1
-  maxPatrolDuration: 4
-  minIdleTime: 1
-  maxIdleTime: 2
-  leftBound: -9
-  rightBound: 9
-  projectilePrefab: {fileID: 7233255296511550349, guid: 4f82f64c19be19e4a9fd074c1b5b4915, type: 3}
-  projectileSpeed: 5
-  player: {fileID: 1175359672}
 --- !u!212 &2062862136
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3960,6 +3912,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2062862137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062862130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6f762f087ead14a9643130ffc3a232, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: b5e6c6fc41515b349b9c7732ba0832fd, type: 2}
+  UI: {fileID: 220554172}
+  player: {fileID: 1175359672}
 --- !u!1 &2132013640
 GameObject:
   m_ObjectHideFlags: 0

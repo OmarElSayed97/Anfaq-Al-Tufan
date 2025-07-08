@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class CombatManager : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class CombatManager : MonoBehaviour
     public int maxCharges = 3;
     public float combatDuration = 10f;
 
-    private List<BaseEnemy> activeEnemies = new List<BaseEnemy>();
+    private List<Enemy> activeEnemies = new List<Enemy>();
 
     [SerializeField] private int currentCharges;
     public int CurrentCharges
@@ -22,13 +23,13 @@ public class CombatManager : MonoBehaviour
             OnChargesChanged?.Invoke(currentCharges);
         }
     }
-    public event System.Action<int> OnChargesChanged;
+    public event Action<int> OnChargesChanged;
     private float timeRemaining;
     public bool combatActive = false;
 
     // General combat events
-    public event System.Action<float> OnTimerChanged;
-    public event System.Action<bool> OnCombatStateChanged;
+    public event Action<float> OnTimerChanged;
+    public event Action<bool> OnCombatStateChanged;
 
     [Header("Combat State Settings")]
     [SerializeField] private float shakeDuration = 0.2f;
@@ -62,7 +63,7 @@ public class CombatManager : MonoBehaviour
         // General event: combat state changed (active)
         OnCombatStateChanged?.Invoke(true);
 
-        var enemies = FindObjectsByType<BaseEnemy>(FindObjectsSortMode.None).ToList();
+        var enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None).ToList();
 
         if (enemies == null || enemies.Count == 0)
         {
@@ -71,7 +72,7 @@ public class CombatManager : MonoBehaviour
             return;
         }
 
-        activeEnemies = new List<BaseEnemy>(enemies);
+        activeEnemies = new List<Enemy>(enemies);
         foreach (var enemy in activeEnemies)
         {
             enemy.OnEnemyKilled += HandleEnemyKilled;
@@ -100,7 +101,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyKilled(BaseEnemy enemy)
+    private void HandleEnemyKilled(Enemy enemy)
     {
         if (activeEnemies.Contains(enemy))
         {
@@ -122,12 +123,7 @@ public class CombatManager : MonoBehaviour
         OnCombatStateChanged?.Invoke(false);
 
         combatActive = false;
-        foreach (var enemy in activeEnemies)
-        {
-            enemy.OnEnemyKilled -= HandleEnemyKilled;
-        }
 
-        activeEnemies.Clear();
         if (!won) {
             Debug.Log("Combat ended without victory.");
             GamePhaseManager.Instance.SetPhase(GamePhase.TunnelDrawing);
@@ -141,12 +137,7 @@ public class CombatManager : MonoBehaviour
     {
         if (!combatActive) return;
         combatActive = false;
-        foreach (var enemy in activeEnemies)
-        {
-            enemy.OnEnemyKilled -= HandleEnemyKilled;
-        }
 
-        activeEnemies.Clear();
         OnCombatStateChanged?.Invoke(false);
         GamePhaseManager.Instance.SetPhase(GamePhase.Idle); // or GameOver phase if needed
         

@@ -6,7 +6,6 @@ using System.Collections;
 public class TunnelNavigator : MonoBehaviour
 {
     [Header("References")]
-    public PlayerContextManager playerContext;
     public Transform characterVisual; // child visual (e.g., triangle)
 
     [Header("Movement Settings")]
@@ -16,6 +15,7 @@ public class TunnelNavigator : MonoBehaviour
     public float burstDuration = 0.25f;
     public LayerMask enemyLayer;
 
+    private PlayerContextManager playerContext;
     private List<Vector3> path;
     private int currentIndex = 0;
     private bool isNavigating = false;
@@ -26,6 +26,11 @@ public class TunnelNavigator : MonoBehaviour
     private bool hasRecordedBurstDepth;
     private bool enemiesChecked;
     public float sliceRadius = 4f;
+
+    public void Awake()
+    {
+        TryGetComponent<PlayerContextManager>(out playerContext);
+    }
 
     public void StartNavigation(Vector3[] tunnelPath)
     {
@@ -54,12 +59,12 @@ public class TunnelNavigator : MonoBehaviour
         GamePhaseManager.Instance.SetInputLock(true);
     }
 
-    public void Initialize()
+    public void OnEnter()
     {
         // InputManager.Instance.swipePressStarted += OnHoverInput;
     }
 
-    public void FinalizeNavigation()
+    public void OnExit()
     {
         // InputManager.Instance.swipePressStarted -= OnHoverInput;
     }
@@ -186,11 +191,11 @@ public class TunnelNavigator : MonoBehaviour
         if (!enemiesChecked)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerContext.playerTransform.position, sliceRadius, enemyLayer);
-            List<BaseEnemy> enemiesInRange = new List<BaseEnemy>();
+            List<Enemy> enemiesInRange = new List<Enemy>();
 
             foreach (var col in colliders)
             {
-                BaseEnemy enemy = col.GetComponent<BaseEnemy>();
+                Enemy enemy = col.GetComponent<Enemy>();
                 if (enemy != null && enemy.IsAlive())
                     enemiesInRange.Add(enemy);
             }
