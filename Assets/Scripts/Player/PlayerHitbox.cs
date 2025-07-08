@@ -9,7 +9,7 @@ public class PlayerHitbox : MonoBehaviour
         if (other.CompareTag("Enemy"))
             {
                 // Debug.Log(other.name+"Hello");
-                BaseEnemy enemy = other.GetComponent<BaseEnemy>();
+                Enemy enemy = other.GetComponent<Enemy>();
                 if (enemy != null && GetComponent<PlayerContextManager>().CurrentAnimationState == AnimationState.Attacking)
                 {
                     // Debug.Log(other.name+ "HI");

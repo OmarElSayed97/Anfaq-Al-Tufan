@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -44,6 +45,13 @@ public class TunnelDrawer : MonoBehaviour
 
     public void OnEnter()
     {
+        var enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None).ToList();
+        if (enemies == null || enemies.Count == 0)
+        {
+            GamePhaseManager.Instance.SetPhase(GamePhase.GameWinState);
+            return;
+        }
+        
         InputManager.Instance.swipePressStarted += OnTunnelDrawStart;
         InputManager.Instance.swipePressEnded += OnTunnelDrawEnd;
         GamePhaseManager.Instance.SetInputLock(false);
