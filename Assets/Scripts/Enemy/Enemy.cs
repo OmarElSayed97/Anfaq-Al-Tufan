@@ -1,4 +1,3 @@
-// Enemy.cs
 using UnityEngine;
 using System;
 using System.Collections;
@@ -101,7 +100,7 @@ public class Enemy : MonoBehaviour
         OnEnemyKilled?.Invoke(this);
         if (UI != null)
             UI.PlayKillFeedback(150, transform.position);
-        Destroy(gameObject, 0.1f);
+        Destroy(gameObject);
     }
 
     private void SetAnimation(EnemyAnimationState state)

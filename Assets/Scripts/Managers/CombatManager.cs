@@ -94,31 +94,51 @@ public class CombatManager : MonoBehaviour
         CurrentCharges--;
         Debug.Log($"Charge used. Remaining: {currentCharges}");
 
-        if (currentCharges <= 0)
-        {
-            Debug.Log("No charges left.");
-            EndCombat();
-        }
+        // if (currentCharges <= 0)
+        // {
+        //     Debug.Log("No charges left.");
+        //     EndCombat();
+        // }
+        CheckWinCondition();
+    }
+
+    public void AddCharge()
+    {
+        // if (!combatActive || currentCharges >= maxCharges) return;
+
+        CurrentCharges++;
+        Debug.Log($"Charge added. Total: {currentCharges}");
     }
 
     private void HandleEnemyKilled(Enemy enemy)
     {
-        if (activeEnemies.Contains(enemy))
-        {
-            activeEnemies.Remove(enemy);
-            enemy.OnEnemyKilled -= HandleEnemyKilled;
-        }
+        if (!activeEnemies.Contains(enemy)) return;
 
+        Debug.Log("Enemy");
+        activeEnemies.Remove(enemy);
+        CheckWinCondition();
+        enemy.OnEnemyKilled -= HandleEnemyKilled;
+
+    }
+
+    public void CheckWinCondition () {
         if (activeEnemies.Count == 0)
         {
             Debug.Log("All enemies defeated! Player wins!");
             EndCombat(true);
+            return;
+        }
+
+        if (currentCharges <= 0)
+        {
+            Debug.Log("No charges left. Player loses!");
+            EndCombat(false);
         }
     }
 
     public void EndCombat(bool won = false)
     {
-        if (!combatActive) return;
+        // if (!combatActive) return;
         // General event: combat state changed (inactive)
         OnCombatStateChanged?.Invoke(false);
 

@@ -57,21 +57,23 @@ public class CombatHandler : MonoBehaviour
     void OnSwipePressEnded(Vector2 pos)
     {
         if (!isSwiping || !CanAcceptInput()) return;
-        isSwiping = false;
-        HandleSwipe(swipeStartScreen, pos);
-        CombatManager.Instance.UseCharge();
-        GamePhaseManager.Instance.SetInputLock(true);
-        playerContext.StopBurstingAnimation();
+        if (HandleSwipe(swipeStartScreen, pos) == 1) {
+            isSwiping = false;
+            GamePhaseManager.Instance.SetInputLock(true);
+            CombatManager.Instance.UseCharge();
+            playerContext.StopBurstingAnimation();
+        };
     }
 
     // Handles the swipe gesture and moves the player
-    void HandleSwipe(Vector2 swipeStartScreen, Vector2 swipeEndScreen)
+    int HandleSwipe(Vector2 swipeStartScreen, Vector2 swipeEndScreen)
     {
+        // Min Swipe Distance Check
         Vector3 swipeStartWorld = ScreenToWorld(swipeStartScreen);
         Vector3 swipeEndWorld = ScreenToWorld(swipeEndScreen);
         Vector3 direction = swipeEndWorld - swipeStartWorld;
         float distance = direction.magnitude;
-        if (distance < minSwipeDistance) return;
+        if (distance < minSwipeDistance) return 0;
 
         playerContext.SetAnimationState(AnimationState.Attacking);
 
@@ -120,6 +122,7 @@ public class CombatHandler : MonoBehaviour
                 GamePhaseManager.Instance.SetInputLock(false);
                 playerContext.SetAnimationState(AnimationState.None);
             });
+        return 1;
     }
 
     // Checks if input can be accepted for a swipe
