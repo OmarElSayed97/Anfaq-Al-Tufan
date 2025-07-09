@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
             if (pcm != null)
                 playerAbove = pcm.CurrentLocation == PlayerLocation.AboveGround;
         }
-        if (playerAbove)
+        if (playerAbove && CombatManager.Instance.combatActive)
         {
             AimAtPlayer();
             currentState = EnemyState.Idle;
@@ -100,7 +100,18 @@ public class Enemy : MonoBehaviour
         OnEnemyKilled?.Invoke(this);
         if (UI != null)
             UI.PlayKillFeedback(150, transform.position);
-        Destroy(gameObject);
+        transform.localScale = Vector3.zero; // Optionally scale down to zero
+        GetComponent<Collider2D>().enabled = false; // Disable collider
+    }
+
+    public void Revive () {
+        if (!isDead) return;
+        isDead = false;
+        currentHealth = data.maxHealth;
+        SetAnimation(EnemyAnimationState.Idle);
+        GetComponent<Collider2D>().enabled = true; // Re-enable collider
+        transform.localScale = Vector3.one; // Reset scale
+        SetRandomPatrol();
     }
 
     private void SetAnimation(EnemyAnimationState state)
@@ -194,4 +205,12 @@ public class Enemy : MonoBehaviour
     public bool IsAlive() => !isDead;
     public int GetCurrentHealth() => currentHealth;
     public EnemyType GetEnemyType() => data.enemyType;
+
+    public void StartSlowMo () {
+        // Implement slow motion start logic if needed
+    }
+
+    public void StopSlowMo () {
+        // Implement slow motion stop logic if needed
+    }
 }

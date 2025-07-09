@@ -58,12 +58,14 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void StartCombat(int charges)
+    public void StartCombat(int charges, float timePressure)
     {
         // General event: combat state changed (active)
         OnCombatStateChanged?.Invoke(true);
 
-        var enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None).ToList();
+        var enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None)
+            .Where(e => e != null && e.IsAlive())
+            .ToList();
 
         if (enemies == null || enemies.Count == 0)
         {
@@ -79,7 +81,7 @@ public class CombatManager : MonoBehaviour
         }
 
         CurrentCharges = charges;
-        timeRemaining = combatDuration;
+        timeRemaining = timePressure;
         combatActive = true;
         OnTimerChanged?.Invoke(timeRemaining);
         GamePhaseManager.Instance.SetPhase(GamePhase.Combat);

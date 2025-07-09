@@ -14,6 +14,7 @@ public class EnemyData : ScriptableObject
 
     [Header("Stats")]
     public int maxHealth = 1;
+    public float timePressure = 3;
 
     [Header("Patrol Settings")]
     public float patrolSpeed = 2f;

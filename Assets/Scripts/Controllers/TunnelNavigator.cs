@@ -193,11 +193,15 @@ public class TunnelNavigator : MonoBehaviour
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerContext.playerTransform.position, sliceRadius, enemyLayer);
             List<Enemy> enemiesInRange = new List<Enemy>();
 
+            float timePressure = 3f;
+
             foreach (var col in colliders)
             {
                 Enemy enemy = col.GetComponent<Enemy>();
-                if (enemy != null && enemy.IsAlive())
+                if (enemy != null && enemy.IsAlive()) {
+                    timePressure += enemy.data.timePressure; // Accumulate time pressure from all enemies
                     enemiesInRange.Add(enemy);
+                }
             }
 
             // Determine charges based on tunnel depth or fixed for now
@@ -205,7 +209,7 @@ public class TunnelNavigator : MonoBehaviour
 
             if (enemiesInRange.Count > 0)
             {
-                CombatManager.Instance.StartCombat(charges);
+                CombatManager.Instance.StartCombat(charges, timePressure);
                 enemiesChecked = true;
                 return true;
             }
